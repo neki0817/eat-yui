@@ -3,9 +3,16 @@ import { NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "");
 
+// リクエストボディの型を定義
+type ContactForm = {
+  name: string;
+  email: string;
+  message: string;
+};
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body: ContactForm = await req.json();
     const { name, email, message } = body;
 
     await resend.emails.send({
