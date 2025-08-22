@@ -21,7 +21,7 @@ export default function Home() {
 
       const data = await res.json();
       if (data.success) {
-        setMessage("メール送信に成功しました 🚀");
+        setMessage("メールが正常に送信されました 🚀");
       } else {
         setMessage(`エラー: ${data.error}`);
       }
