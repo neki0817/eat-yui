@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { ShoppingCart, X, Plus, Minus, ArrowRight, Sparkles } from "lucide-react"
+import { ShoppingCart, X, Plus, Minus, ArrowRight, Sparkles, Home } from "lucide-react"
 
 const PRODUCTS = [
   {
@@ -120,6 +120,15 @@ export default function ShopPage() {
     <div className="min-h-screen bg-neutral-50 font-sans text-neutral-800">
       {/* Hero Section */}
       <header className="relative min-h-[100vh] w-full flex flex-col items-center justify-center overflow-hidden">
+        {/* Home Button */}
+        <Link
+          href="/"
+          className="absolute top-6 left-6 z-20 inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-black/20 hover:bg-black/30 px-4 py-2 rounded-full backdrop-blur-sm"
+        >
+          <Home className="w-4 h-4" />
+          <span className="text-sm font-medium">ホームに戻る</span>
+        </Link>
+
         <div className="absolute inset-0 z-0 overflow-hidden bg-neutral-200">
           <Image
             src="/images/hero.png"
