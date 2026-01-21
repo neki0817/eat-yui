@@ -15,14 +15,14 @@ export default function CompanyPage() {
     { label: "代表者", value: "代表取締役 福田嘉章" },
     { label: "設立", value: "令和1年10月18日（2019年10月）" },
     { label: "所在地", value: "岡山県倉敷市日吉町338番地1 セジュール森山201号" },
-    { label: "従業員数", value: "185名（社員48名、パートアルバイト137名）" },
+    { label: "従業員数", value: "202名（社員48名、パートアルバイト154名）" },
     { label: "外国人スタッフ", value: "65名（社員39名、アルバイト26名）" },
     { label: "事業内容", value: "飲食店経営（直営12店舗）" },
     { label: "展開エリア", value: "岡山県、大阪府、東京都、宮城県" },
   ]
 
   return (
-    <div className="section-padding">
+    <div className="pt-24 section-padding">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="text-center mb-16">
@@ -63,7 +63,7 @@ export default function CompanyPage() {
                     </p>
                     <p className="text-gray-700 leading-relaxed mb-4">
                       現在、岡山・大阪・東京・宮城の4つのエリアで12店舗を展開し、
-                      185名のスタッフが働いています。その中でも特に誇りに思うのは、
+                      202名のスタッフが働いています。その中でも特に誇りに思うのは、
                       65名の外国人スタッフが活躍していることです。
                     </p>
                     <p className="text-gray-700 leading-relaxed mb-4">

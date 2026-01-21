@@ -170,11 +170,11 @@ export default function StoresPage() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case "フードコート":
-        return "bg-accent-red bg-opacity-10 text-accent-red border-accent-red"
+        return "bg-red-50 text-accent-red border-accent-red"
       case "レストラン":
-        return "bg-accent-navy bg-opacity-10 text-accent-navy border-accent-navy"
+        return "bg-blue-50 text-accent-navy border-accent-navy"
       case "横丁レストラン":
-        return "bg-accent-gold bg-opacity-10 text-accent-gold border-accent-gold"
+        return "bg-amber-50 text-accent-gold border-accent-gold"
       default:
         return "bg-gray-100 text-gray-800 border-gray-300"
     }
@@ -199,7 +199,7 @@ export default function StoresPage() {
   }
 
   return (
-    <div className="section-padding">
+    <div className="pt-24 section-padding">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="text-center mb-16">

@@ -1,200 +1,313 @@
+"use client"
+
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Users, Globe, Store } from "lucide-react"
 import Image from "next/image"
+import { motion } from "framer-motion"
+import {
+  Users,
+  Globe,
+  MapPin,
+  Utensils,
+  Award,
+  ShoppingCart,
+  ChevronRight,
+  ExternalLink,
+} from "lucide-react"
+
+const fadeIn = {
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.6 },
+}
 
 export default function HomePage() {
-  const features = [
+  const stats = [
     {
-      icon: Store,
-      title: "多業態ブランディング",
-      description: "12店舗で異なる業態を展開し、地域・施設のニーズに合わせたブランディングを実現しています。",
+      label: "直営店舗数",
+      value: "12",
+      unit: "店舗",
+      icon: <Utensils className="text-orange-600" />,
     },
     {
-      icon: Users,
-      title: "外国人スタッフ活用",
-      description: "202名中65名が外国人スタッフ。多様性を活かした国際的な職場環境を構築しています。",
+      label: "従業員数",
+      value: "202",
+      unit: "名",
+      icon: <Users className="text-orange-600" />,
     },
     {
-      icon: Globe,
-      title: "地域密着型運営",
-      description: "岡山・大阪・東京・宮城の4エリアで地域に根ざしたサービスを提供しています。",
+      label: "外国人スタッフ",
+      value: "65",
+      unit: "名",
+      icon: <Globe className="text-orange-600" />,
+    },
+    {
+      label: "展開エリア",
+      value: "4",
+      unit: "地域",
+      icon: <MapPin className="text-orange-600" />,
     },
   ]
 
-  const stats = [
-    { number: "12", label: "直営店舗数" },
-    { number: "202", label: "従業員数" },
-    { number: "65", label: "外国人スタッフ" },
-    { number: "4", label: "展開エリア" },
+  const features = [
+    {
+      title: "多業態ブランディング",
+      desc: "和食、イタリアン、居酒屋など、出店地域や施設のニーズに合わせた最適なコンセプトを柔軟に展開。",
+      icon: <Award className="w-8 h-8 text-white" />,
+      color: "bg-orange-500",
+    },
+    {
+      title: "多様性の尊重",
+      desc: "202名中65名が外国人スタッフ。異なる文化背景を持つチームが、グローバルな視点でのサービスを提供。",
+      icon: <Globe className="w-8 h-8 text-white" />,
+      color: "bg-blue-500",
+    },
+    {
+      title: "地域密着の情熱",
+      desc: "岡山から始まり東京、大阪、宮城へ。各地域の「食」の課題に寄り添い、地域を元気にする店舗運営。",
+      icon: <MapPin className="w-8 h-8 text-white" />,
+      color: "bg-green-600",
+    },
   ]
 
   return (
-    <div className="overflow-hidden">
-      {/* Hero Section */}
-      <section className="hero-gradient text-white section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                食を通じて
-                <br />
-                皆様に幸福を
-              </h1>
-              <p className="text-xl mb-8 text-orange-100">
-                株式会社EAT結は、多業態ブランディングと外国人スタッフの活用により、
-                4つのエリアで12店舗を展開する飲食店経営会社です。
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-white text-orange-500 hover:bg-gray-100">
-                  <Link href="/company">企業情報を見る</Link>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-orange-500 bg-transparent"
-                >
-                  <Link href="/stores">店舗一覧を見る</Link>
-                </Button>
-              </div>
-            </div>
-            <div className="relative">
-              <Image
-                src="/images/hero-kitchen-team.jpg"
-                alt="EAT結のキッチンスタッフ4名が笑顔でカウンターに並んで立っている実際の店舗風景"
-                width={600}
-                height={400}
-                className="rounded-lg shadow-2xl"
-                priority
-              />
-            </div>
-          </div>
+    <div className="min-h-screen bg-neutral-50 font-sans text-neutral-800">
+      {/* ヒーローセクション */}
+      <section className="relative md:h-screen flex flex-col md:flex-row md:items-center overflow-hidden">
+        {/* モバイル：画像を固定高さで表示 */}
+        <div className="relative w-full h-[50vh] md:absolute md:inset-0 md:h-full">
+          <Image
+            src="/images/hero-kitchen-team.jpg"
+            alt="EAT結のキッチンスタッフ"
+            fill
+            className="object-cover object-[center_20%] md:object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/40"></div>
         </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="bg-warm-beige section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-accent-red mb-2">{stat.number}</div>
-                <div className="text-charcoal font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-black mb-4">EAT結の3つの特徴</h2>
-            <p className="text-xl text-charcoal max-w-3xl mx-auto">
-              私たちは多様性と地域密着を大切にし、お客様に最高の食体験を提供しています。
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-accent-gold bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <feature.icon className="w-8 h-8 text-accent-gold" />
-                  </div>
-                  <h3 className="text-xl font-bold text-primary-black mb-4">{feature.title}</h3>
-                  <p className="text-charcoal leading-relaxed">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Company Overview */}
-      <section className="bg-warm-beige section-padding">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-black mb-6 japanese-accent">会社概要</h2>
-              <div className="space-y-4 text-charcoal">
-                <div className="flex">
-                  <span className="font-semibold w-24">会社名:</span>
-                  <span>株式会社EAT結</span>
-                </div>
-                <div className="flex">
-                  <span className="font-semibold w-24">代表者:</span>
-                  <span>代表取締役 福田嘉章</span>
-                </div>
-                <div className="flex">
-                  <span className="font-semibold w-24">設立:</span>
-                  <span>令和1年10月18日（2019年10月）</span>
-                </div>
-                <div className="flex">
-                  <span className="font-semibold w-24">所在地:</span>
-                  <div>
-                    <div className="mb-1">
-                      <span className="font-semibold text-accent-red">岡山本社：</span>
-                      岡山県倉敷市日吉町338番地1
-                    </div>
-                    <div>
-                      <span className="font-semibold text-accent-navy">東京オフィス：</span>
-                      東京都渋谷区恵比寿1-30-1
-                    </div>
-                  </div>
-                </div>
-                <div className="flex">
-                  <span className="font-semibold w-24">従業員:</span>
-                  <span>202名（社員48名、パートアルバイト154名）</span>
-                </div>
-              </div>
-              <div className="mt-8 bg-gradient-to-r from-accent-red to-orange-600 rounded-lg p-1 shadow-lg inline-block">
-                <Button className="bg-white text-accent-red hover:bg-gray-100 font-bold text-lg px-8 py-3 shadow-md transform hover:scale-105 transition-all">
-                  <Link href="/company" className="flex items-center">
-                    📖 詳しく見る
-                  </Link>
-                </Button>
-              </div>
-            </div>
-            <div>
-              <Image
-                src="/placeholder.svg?height=400&width=500"
-                alt="EAT結の店舗内観"
-                width={500}
-                height={400}
-                className="rounded-lg shadow-lg"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-primary-black text-white section-padding">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">一緒に働きませんか？</h2>
-          <p className="text-xl text-gray-300 mb-8">
-            EAT結では多様なバックグラウンドを持つスタッフを募集しています。
-            国籍を問わず、食を通じて幸福を届ける仲間を歓迎します。
+        {/* モバイル：テキストコンテンツ */}
+        <div className="md:hidden relative z-10 bg-neutral-900 text-white px-6 py-10">
+          <h1 className="text-4xl font-bold leading-tight mb-4">
+            食を通じて
+            <br />
+            <span className="text-orange-400">皆様に幸福を</span>
+          </h1>
+          <p className="text-base mb-8 text-neutral-300">
+            多業態ブランディングと外国人スタッフの活用により、地域・施設のニーズに合わせた新しい食体験を創造します。
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <div className="bg-gradient-to-r from-accent-red to-orange-600 rounded-lg p-1 shadow-lg">
-              <Button size="lg" className="bg-white text-accent-red hover:bg-gray-100 font-bold text-lg px-8 py-3">
-                <Link href="/careers" className="flex items-center">
-                  💼 採用情報を見る
-                </Link>
-              </Button>
-            </div>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-primary-black bg-transparent"
+          <div className="flex flex-col space-y-3">
+            <Link
+              href="/company"
+              className="bg-white text-neutral-900 px-6 py-3 rounded-full font-bold text-center flex items-center justify-center"
             >
-              <Link href="/contact">お問い合わせ</Link>
-            </Button>
+              企業情報を見る <ChevronRight className="ml-2" size={20} />
+            </Link>
+            <Link
+              href="/shop"
+              className="bg-orange-600 text-white px-6 py-3 rounded-full font-bold text-center flex items-center justify-center"
+            >
+              <ShoppingCart className="mr-2" size={20} /> ECショップはこちら
+            </Link>
           </div>
+        </div>
+
+        {/* デスクトップ：テキストコンテンツ */}
+        <div className="hidden md:block relative z-10 max-w-7xl mx-auto px-6 w-full text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-7xl font-bold leading-tight mb-6">
+              食を通じて
+              <br />
+              <span className="text-orange-400">皆様に幸福を</span>
+            </h1>
+            <p className="text-xl max-w-2xl mb-10 text-neutral-200">
+              多業態ブランディングと外国人スタッフの活用により、地域・施設のニーズに合わせた新しい食体験を創造します。
+            </p>
+            <div className="flex flex-row space-x-4">
+              <Link
+                href="/company"
+                className="bg-white text-neutral-900 px-8 py-4 rounded-full font-bold hover:bg-orange-50 transition-colors flex items-center justify-center"
+              >
+                企業情報を見る <ChevronRight className="ml-2" size={20} />
+              </Link>
+              <Link
+                href="/shop"
+                className="bg-orange-600 text-white px-8 py-4 rounded-full font-bold hover:bg-orange-700 transition-all flex items-center justify-center shadow-lg"
+              >
+                <ShoppingCart className="mr-2" size={20} /> ECショップはこちら
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1 }}
+          className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 text-white flex-col items-center"
+        >
+          <span className="text-sm font-light mb-2">Scroll</span>
+          <div className="w-px h-12 bg-gradient-to-b from-white to-transparent"></div>
+        </motion.div>
+      </section>
+
+      {/* 実績数字セクション */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, idx) => (
+              <motion.div
+                key={idx}
+                {...fadeIn}
+                transition={{ delay: idx * 0.1 }}
+                className="text-center p-6 bg-neutral-50 rounded-2xl border border-neutral-100 shadow-sm"
+              >
+                <div className="flex justify-center mb-4">{stat.icon}</div>
+                <div className="text-4xl font-black text-neutral-900 mb-1">
+                  {stat.value}
+                  <span className="text-lg font-bold ml-1">{stat.unit}</span>
+                </div>
+                <div className="text-sm text-neutral-500 font-medium">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 特徴セクション */}
+      <section className="py-24 bg-neutral-50">
+        <div className="max-w-7xl mx-auto px-6 text-center mb-16">
+          <motion.span
+            {...fadeIn}
+            className="text-orange-600 font-bold tracking-widest uppercase text-sm"
+          >
+            Our Strength
+          </motion.span>
+          <motion.h2
+            {...fadeIn}
+            transition={{ delay: 0.1 }}
+            className="text-3xl md:text-4xl font-bold mt-4"
+          >
+            EAT結の3つの特徴
+          </motion.h2>
+          <div className="w-16 h-1 bg-orange-600 mx-auto mt-6"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+          {features.map((feature, idx) => (
+            <motion.div
+              key={idx}
+              {...fadeIn}
+              transition={{ delay: idx * 0.2 }}
+              className="group bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+            >
+              <div
+                className={`${feature.color} w-16 h-16 rounded-2xl flex items-center justify-center mb-8 shadow-lg transition-transform group-hover:scale-110`}
+              >
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-bold mb-4">{feature.title}</h3>
+              <p className="text-neutral-500 leading-relaxed">{feature.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* EC誘導セクション */}
+      <section className="py-24 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="bg-neutral-900 rounded-[3rem] overflow-hidden relative">
+            <div className="grid md:grid-cols-2">
+              <div className="p-12 md:p-20 text-white flex flex-col justify-center z-10">
+                <motion.span
+                  {...fadeIn}
+                  className="text-orange-500 font-bold mb-4"
+                >
+                  ONLINE SHOP
+                </motion.span>
+                <motion.h2
+                  {...fadeIn}
+                  transition={{ delay: 0.1 }}
+                  className="text-3xl md:text-5xl font-bold mb-6"
+                >
+                  お店の味をご自宅で
+                </motion.h2>
+                <motion.p
+                  {...fadeIn}
+                  transition={{ delay: 0.2 }}
+                  className="text-neutral-400 mb-10 leading-relaxed text-lg"
+                >
+                  小陽春が手がける本格台湾料理を全国にお届けします。こだわりの味をご自宅でお楽しみください。
+                </motion.p>
+                <motion.div {...fadeIn} transition={{ delay: 0.3 }}>
+                  <Link
+                    href="/shop"
+                    className="inline-flex items-center space-x-3 bg-orange-600 hover:bg-orange-700 text-white px-10 py-5 rounded-full font-black transition-all shadow-xl group"
+                  >
+                    <span>オンラインショップへ</span>
+                    <ExternalLink
+                      size={20}
+                      className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
+                    />
+                  </Link>
+                </motion.div>
+              </div>
+              <div className="relative min-h-[400px]">
+                <Image
+                  src="/images/stores/shao-yang-chun-exterior.jpg"
+                  alt="小陽春店舗"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/40 to-transparent md:block hidden"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTAセクション */}
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <motion.h2
+            {...fadeIn}
+            className="text-3xl md:text-4xl font-bold mb-6"
+          >
+            一緒に働きませんか？
+          </motion.h2>
+          <motion.p
+            {...fadeIn}
+            transition={{ delay: 0.1 }}
+            className="text-xl text-neutral-500 mb-10"
+          >
+            EAT結では多様なバックグラウンドを持つスタッフを募集しています。
+            <br />
+            国籍を問わず、食を通じて幸福を届ける仲間を歓迎します。
+          </motion.p>
+          <motion.div
+            {...fadeIn}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <Link
+              href="/careers"
+              className="bg-neutral-900 text-white px-8 py-4 rounded-full font-bold hover:bg-orange-600 transition-all"
+            >
+              採用情報を見る
+            </Link>
+            <Link
+              href="/contact-form"
+              className="border-2 border-neutral-900 text-neutral-900 px-8 py-4 rounded-full font-bold hover:bg-neutral-900 hover:text-white transition-all"
+            >
+              お問い合わせ
+            </Link>
+          </motion.div>
         </div>
       </section>
     </div>

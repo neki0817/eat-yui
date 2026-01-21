@@ -72,7 +72,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="section-padding">
+    <div className="pt-24 section-padding">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">お問い合わせ</h1>

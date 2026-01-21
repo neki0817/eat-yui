@@ -87,7 +87,7 @@ export default function CareersPage() {
   ]
 
   return (
-    <div className="section-padding">
+    <div className="pt-24 section-padding">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="text-center mb-16">

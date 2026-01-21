@@ -9,7 +9,7 @@ export default function BusinessPage() {
   const businessOverview = {
     established: "2019年10月",
     stores: 12,
-    employees: 185,
+    employees: 202,
     foreignStaff: 65,
     areas: 4,
   }
@@ -69,7 +69,7 @@ export default function BusinessPage() {
       icon: Users,
       title: "外国人労働力活用ノウハウ",
       description:
-        "185名中65名（35%）が外国人スタッフ。多様性を活かした国際的な職場環境と独自の人材活用システムを構築。",
+        "202名中65名（約32%）が外国人スタッフ。多様性を活かした国際的な職場環境と独自の人材活用システムを構築。",
       details: [
         "多言語対応システム",
         "文化的多様性の尊重",
@@ -122,7 +122,7 @@ export default function BusinessPage() {
   ]
 
   return (
-    <div className="section-padding">
+    <div className="pt-24 section-padding">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="text-center mb-16">
@@ -139,7 +139,7 @@ export default function BusinessPage() {
               <CardTitle className="text-2xl text-center text-primary-black">事業概要</CardTitle>
             </CardHeader>
             <CardContent className="p-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 <div>
                   <h3 className="text-xl font-bold text-primary-black mb-4 japanese-accent">飲食店経営事業</h3>
                   <p className="text-charcoal leading-relaxed mb-6">
@@ -153,11 +153,11 @@ export default function BusinessPage() {
                     多様性に富んだ組織で、地域・施設のニーズに合わせた多業態ブランディングを強みとしています。
                   </p>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-accent-red bg-opacity-10 rounded-lg">
+                    <div className="text-center p-4 bg-red-50 rounded-lg">
                       <div className="text-2xl font-bold text-accent-red">{businessOverview.stores}</div>
                       <div className="text-sm text-charcoal">直営店舗</div>
                     </div>
-                    <div className="text-center p-4 bg-accent-gold bg-opacity-10 rounded-lg">
+                    <div className="text-center p-4 bg-amber-50 rounded-lg">
                       <div className="text-2xl font-bold text-accent-gold">{businessOverview.areas}</div>
                       <div className="text-sm text-charcoal">展開エリア</div>
                     </div>
@@ -186,7 +186,7 @@ export default function BusinessPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xl text-primary-black">{area.name}</CardTitle>
-                    <Badge className="bg-accent-navy bg-opacity-10 text-accent-navy border-accent-navy">
+                    <Badge className="bg-blue-50 text-accent-navy border-accent-navy">
                       {area.stores}店舗
                     </Badge>
                   </div>
@@ -236,7 +236,7 @@ export default function BusinessPage() {
               <Card key={index} className="border-0 shadow-lg">
                 <CardHeader>
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-accent-red bg-opacity-10 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
                       <strength.icon className="w-6 h-6 text-accent-red" />
                     </div>
                     <CardTitle className="text-lg text-primary-black">{strength.title}</CardTitle>
@@ -268,7 +268,7 @@ export default function BusinessPage() {
             {businessModel.map((phase, index) => (
               <Card key={index} className="border-0 shadow-lg text-center">
                 <CardContent className="p-6">
-                  <div className="w-16 h-16 bg-accent-navy bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <phase.icon className="w-8 h-8 text-accent-navy" />
                   </div>
                   <div className="text-sm font-semibold text-accent-red mb-2">STEP {index + 1}</div>
