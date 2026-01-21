@@ -7,14 +7,17 @@ import { Footer } from "./footer"
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
-  // /shop ページでは共通のHeader/Footerを非表示にする
+  // /shop ページと /admin ページでは共通のHeader/Footerを非表示にする
   const isShopPage = pathname === "/shop"
+  const isAdminPage = pathname?.startsWith("/admin")
+
+  const hideLayout = isShopPage || isAdminPage
 
   return (
     <>
-      {!isShopPage && <Header />}
+      {!hideLayout && <Header />}
       {children}
-      {!isShopPage && <Footer />}
+      {!hideLayout && <Footer />}
     </>
   )
 }

@@ -5,46 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ShoppingCart, X, Plus, Minus, ArrowRight, Sparkles, Home } from "lucide-react"
-
-const PRODUCTS = [
-  {
-    id: "castella-01",
-    name: "米粉台湾カステラ",
-    price: 1800,
-    weight: "450g",
-    description:
-      "国産米粉100%使用。驚くほど「ふわ・しゅわ」な食感とキビ砂糖の優しい甘さ。小麦粉不使用のグルテンフリーです。",
-    ingredients: "全卵、米粉(国産)、キビ砂糖、植物油、生乳、バニラエッセンス",
-    allergens: "卵・乳",
-    image: "/images/カステラ.png",
-    cartImage: "/images/カステラp.png",
-  },
-  {
-    id: "tangyuan-01",
-    name: "紅白湯圓（タンユェン）",
-    price: 1200,
-    weight: "350g (20個入)",
-    description:
-      "国産白玉粉を使用した、もちもちぷるんとした食感。お祝い事にもぴったりな華やかな紅白カラーです。",
-    ingredients: "白玉粉(国産)、砂糖、コーンスターチ、植物油、食塩、タピオカ澱粉",
-    allergens: "なし",
-    image: "/images/紅白.png",
-    cartImage: "/images/紅白p.png",
-  },
-  {
-    id: "sesame-tangyuan-01",
-    name: "胡麻湯圓（タンユェン）",
-    price: 1400,
-    weight: "350g (20個入)",
-    description:
-      "濃厚な黒胡麻餡がとろけ出す、台湾定番のスイーツ。国産白玉粉の生地で丁寧に包み込みました。",
-    ingredients:
-      "（生地）白玉粉(国産)、砂糖、コーンスターチ、植物油、食塩、タピオカ澱粉（餡）黒胡麻(国内製造)、砂糖、澱粉、植物性油",
-    allergens: "ごま・大豆",
-    image: "/images/胡麻湯圓.png",
-    cartImage: "/images/胡麻p.png",
-  },
-]
+import { supabase, type Product } from "@/lib/supabase"
 
 type CartItem = {
   id: string
@@ -61,10 +22,60 @@ const fadeIn = {
   transition: { duration: 0.6 },
 }
 
+const colorTheme = {
+  orange: {
+    bg: "bg-orange-50",
+    bgAlt: "bg-neutral-50",
+    accent: "text-orange-600",
+    accentBg: "bg-orange-600",
+    sparkle: "text-orange-400",
+    button: "hover:bg-orange-600",
+    border: "border-orange-100",
+  },
+  red: {
+    bg: "bg-red-50",
+    bgAlt: "bg-neutral-50",
+    accent: "text-red-600",
+    accentBg: "bg-red-600",
+    sparkle: "text-red-400",
+    button: "hover:bg-red-600",
+    border: "border-red-100",
+  },
+  neutral: {
+    bg: "bg-neutral-200",
+    bgAlt: "bg-neutral-100",
+    accent: "text-neutral-600",
+    accentBg: "bg-neutral-600",
+    sparkle: "text-neutral-400",
+    button: "hover:bg-neutral-600",
+    border: "border-neutral-200",
+  },
+}
+
 export default function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+
+  // 公開中の商品を取得
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("status", "published")
+        .order("display_order", { ascending: true })
+
+      if (!error && data) {
+        setProducts(data)
+      }
+      setIsLoading(false)
+    }
+
+    fetchProducts()
+  }, [])
 
   // メニューが開いている時はスクロールを無効化
   useEffect(() => {
@@ -81,7 +92,7 @@ export default function ShopPage() {
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-  const addToCart = (product: (typeof PRODUCTS)[0]) => {
+  const addToCart = (product: Product) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id)
       if (existing) {
@@ -89,7 +100,13 @@ export default function ShopPage() {
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         )
       }
-      return [...prev, { id: product.id, name: product.name, price: product.price, image: product.cartImage, quantity: 1 }]
+      return [...prev, {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.cart_image_url || product.image_url || "/images/placeholder.png",
+        quantity: 1
+      }]
     })
     setIsCartOpen(true)
   }
@@ -114,6 +131,11 @@ export default function ShopPage() {
       alert("Stripe決済画面へリダイレクトします。")
       setIsProcessing(false)
     }, 1500)
+  }
+
+  // 説明文を段落に分割
+  const splitDescription = (description: string) => {
+    return description ? description.split(/\n\n+/).filter((p) => p.trim()) : []
   }
 
   return (
@@ -176,7 +198,7 @@ export default function ShopPage() {
             className="mt-12 flex flex-col items-center gap-6"
           >
             <a
-              href="#castella-story"
+              href="#product-stories"
               className="bg-orange-600 text-white px-8 py-4 md:px-10 md:py-5 rounded-full font-black hover:bg-white hover:text-orange-600 transition-all shadow-xl flex items-center gap-3 text-lg group"
             >
               物語を読み進める
@@ -200,219 +222,108 @@ export default function ShopPage() {
         )}
       </button>
 
-      {/* Story 01: Taiwan Castella */}
-      <section id="castella-story" className="py-20 md:py-32 bg-white overflow-hidden border-b border-neutral-100">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <motion.div {...fadeIn} className="relative order-2 md:order-1">
-              <div className="absolute -inset-4 bg-orange-50 rounded-3xl rotate-3"></div>
-              <div className="relative rounded-3xl shadow-xl w-full h-[450px] md:h-[650px] overflow-hidden border-4 md:border-8 border-white">
-                <Image
-                  src={PRODUCTS[0].image}
-                  alt="米粉台湾カステラ"
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <div className="absolute -bottom-6 -left-4 md:-bottom-8 md:-left-8 bg-neutral-900 text-white p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl max-w-[220px]">
-                <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-orange-400 mb-3" />
-                <p className="text-sm md:text-base font-bold leading-relaxed tracking-tight text-white/90">
-                  「しゅわっ、ふわっ」
-                  <br />
-                  一口で魔法にかかる、
-                  <br />
-                  米粉の奇跡。
-                </p>
-              </div>
-            </motion.div>
-            <motion.div {...fadeIn} transition={{ delay: 0.2 }} className="space-y-8 md:order-2">
-              <div className="space-y-4">
-                <span className="text-orange-600 font-black tracking-widest text-xs md:text-sm uppercase flex items-center gap-3">
-                  <div className="w-8 md:w-12 h-px bg-orange-600"></div> Product Story 01
-                </span>
-                <h2 className="text-3xl md:text-5xl font-black text-neutral-900 leading-tight tracking-tight">
-                  雲を食べる、
-                  <br />
-                  贅沢な瞬間。
-                </h2>
-              </div>
-              <div className="space-y-6 text-neutral-600 leading-relaxed text-base md:text-lg font-medium">
-                <p>
-                  「台湾カステラを、もっと多くの人に楽しんでほしい。」
-                  <br />
-                  その想いから、私たちは小麦粉を一切使わず、国産米粉100%での再現に挑みました。
-                </p>
-                <p>
-                  米粉は小麦粉に比べて水分をたっぷり抱え込み、焼き上がりは驚くほどしっとり。
-                  フォークを入れた瞬間に聞こえる「しゅわっ」という音は、幸せが弾ける合図です。
-                </p>
-                <p>
-                  キビ砂糖のまろやかな甘みが、米粉の風味を引き立てます。レンジで40秒。
-                  立ち上る温かな香りと共に、お口の中でほどける自慢の味をお楽しみください。
-                </p>
-              </div>
-              <div className="pt-8 md:pt-10 border-t border-neutral-100 flex flex-col sm:flex-row items-center gap-6 md:gap-10">
-                <div className="text-center sm:text-left">
-                  <span className="text-xs text-neutral-400 font-bold block mb-1 tracking-widest">
-                    米粉台湾カステラ / Rice Flour Castella
-                  </span>
-                  <span className="text-3xl md:text-4xl font-black text-neutral-900">
-                    ¥{PRODUCTS[0].price.toLocaleString()}
-                  </span>
-                </div>
-                <button
-                  onClick={() => addToCart(PRODUCTS[0])}
-                  className="w-full sm:flex-1 bg-neutral-900 text-white py-4 md:py-5 rounded-2xl font-black hover:bg-orange-600 transition-all shadow-xl flex items-center justify-center gap-3 text-base md:text-lg"
-                >
-                  カートに追加 <Plus className="w-5 h-5 md:w-6 md:h-6" />
-                </button>
-              </div>
-            </motion.div>
-          </div>
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="py-32 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
         </div>
-      </section>
+      ) : (
+        /* Product Stories - Dynamic */
+        <div id="product-stories">
+          {products.map((product, index) => {
+            const theme = colorTheme[product.color_theme] || colorTheme.orange
+            const isEven = index % 2 === 1
+            const paragraphs = splitDescription(product.description)
+            const sectionBg = index % 3 === 0 ? "bg-white" : index % 3 === 1 ? "bg-neutral-50" : "bg-neutral-100"
 
-      {/* Story 02: Red and White Tangyuan */}
-      <section className="py-20 md:py-32 bg-neutral-50 overflow-hidden border-b border-neutral-100">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <motion.div {...fadeIn} className="space-y-8">
-              <div className="space-y-4 text-right md:text-left">
-                <span className="text-orange-600 font-black tracking-widest text-xs md:text-sm uppercase flex items-center gap-3 justify-end md:justify-start">
-                  Product Story 02 <div className="w-8 md:w-12 h-px bg-orange-600"></div>
-                </span>
-                <h2 className="text-3xl md:text-5xl font-black text-neutral-900 leading-tight tracking-tight">
-                  紅白が結ぶ、
-                  <br />
-                  「円満」の願い。
-                </h2>
-              </div>
-              <div className="space-y-6 text-neutral-600 leading-relaxed text-base md:text-lg font-medium">
-                <p>
-                  台湾で冬至やお正月に欠かせない「湯圓（タンユェン）」。
-                  丸い形は「家族の絆」や「物事が円滑に進む」という願いが込められています。
-                </p>
-                <p>
-                  小陽春の紅白湯圓は、国産米粉と白玉粉をブレンドした独自の配合で、
-                  もちもち食感とぷるんとした弾力を両立。米粉ならではの優しい甘みが口いっぱいに広がります。
-                </p>
-                <p>
-                  紅白の彩りはお祝いの席や、大切な方への贈り物にも最適。
-                  茹で上がった湯圓が鍋の中でぷかぷかダンスを始めたら、特別な時間の始まりです。
-                </p>
-              </div>
-              <div className="pt-8 md:pt-10 border-t border-neutral-200 flex flex-col sm:flex-row items-center gap-6 md:gap-10">
-                <div className="text-center sm:text-left">
-                  <span className="text-xs text-neutral-400 font-bold block mb-1 tracking-widest">
-                    紅白湯圓 / Red & White Tangyuan
-                  </span>
-                  <span className="text-3xl md:text-4xl font-black text-neutral-900">
-                    ¥{PRODUCTS[1].price.toLocaleString()}
-                  </span>
-                </div>
-                <button
-                  onClick={() => addToCart(PRODUCTS[1])}
-                  className="w-full sm:flex-1 bg-neutral-900 text-white py-4 md:py-5 rounded-2xl font-black hover:bg-red-600 transition-all shadow-xl flex items-center justify-center gap-3 text-base md:text-lg"
-                >
-                  カートに追加 <Plus className="w-5 h-5 md:w-6 md:h-6" />
-                </button>
-              </div>
-            </motion.div>
-            <motion.div {...fadeIn} transition={{ delay: 0.2 }} className="relative">
-              <div className="absolute -inset-4 bg-red-50 rounded-3xl -rotate-3 border-2 border-red-100"></div>
-              <div className="relative rounded-3xl shadow-xl w-full h-[400px] md:h-[550px] overflow-hidden border-4 md:border-8 border-white">
-                <Image
-                  src={PRODUCTS[1].image}
-                  alt="紅白湯圓"
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <div className="absolute -bottom-6 -right-4 md:-bottom-8 md:-right-8 bg-neutral-900 text-white p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl max-w-[220px]">
-                <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-red-400 mb-3" />
-                <p className="text-sm md:text-base font-bold leading-relaxed tracking-tight text-white/90">
-                  「もちっ、ぷるん」
-                  <br />
-                  紅白で結ぶ、
-                  <br />
-                  円満の願い。
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+            return (
+              <section
+                key={product.id}
+                className={`py-20 md:py-32 ${sectionBg} overflow-hidden border-b border-neutral-100`}
+              >
+                <div className="max-w-7xl mx-auto px-6">
+                  <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+                    {/* Image */}
+                    <motion.div
+                      {...fadeIn}
+                      className={`relative ${isEven ? "" : "order-2 md:order-1"}`}
+                    >
+                      <div className={`absolute -inset-4 ${theme.bg} rounded-3xl ${isEven ? "-rotate-3" : "rotate-3"} ${theme.border} border-2`}></div>
+                      <div className="relative rounded-3xl shadow-xl w-full h-[450px] md:h-[650px] overflow-hidden border-4 md:border-8 border-white">
+                        {product.image_url ? (
+                          <Image
+                            src={product.image_url}
+                            alt={product.name}
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-700"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-neutral-200 flex items-center justify-center text-neutral-400">
+                            No Image
+                          </div>
+                        )}
+                      </div>
+                      <div className={`absolute -bottom-6 ${isEven ? "-right-4 md:-right-8" : "-left-4 md:-left-8"} bg-neutral-900 text-white p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl max-w-[220px]`}>
+                        <Sparkles className={`w-6 h-6 md:w-8 md:h-8 ${theme.sparkle} mb-3`} />
+                        <p className="text-sm md:text-base font-bold leading-relaxed tracking-tight text-white/90">
+                          {product.catchphrase || "おいしさをお届けします"}
+                        </p>
+                      </div>
+                    </motion.div>
 
-      {/* Story 03: Sesame Tangyuan */}
-      <section className="py-20 md:py-32 bg-neutral-100 overflow-hidden border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <motion.div {...fadeIn} className="relative order-2 md:order-1">
-              <div className="absolute -inset-4 bg-neutral-200 rounded-3xl rotate-2 shadow-inner"></div>
-              <div className="relative rounded-3xl shadow-xl w-full h-[450px] md:h-[550px] overflow-hidden border-4 md:border-8 border-white">
-                <Image
-                  src={PRODUCTS[2].image}
-                  alt="芝麻胡麻湯圓"
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <div className="absolute -bottom-6 -left-4 md:-bottom-8 md:-left-8 bg-neutral-900 text-white p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl max-w-[220px]">
-                <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-orange-400 mb-3" />
-                <p className="text-sm md:text-base font-bold leading-relaxed tracking-tight text-white/90">
-                  「とろっ、濃厚」
-                  <br />
-                  黒胡麻が広がる、
-                  <br />
-                  至福の一粒。
-                </p>
-              </div>
-            </motion.div>
-            <motion.div {...fadeIn} transition={{ delay: 0.2 }} className="space-y-8 md:order-2">
-              <div className="space-y-4">
-                <span className="text-orange-600 font-black tracking-widest text-xs md:text-sm uppercase flex items-center gap-3">
-                  <div className="w-8 md:w-12 h-px bg-orange-600"></div> Product Story 03
-                </span>
-                <h2 className="text-3xl md:text-5xl font-black text-neutral-900 leading-tight tracking-tight">
-                  黒胡麻の、
-                  <br />
-                  深い深い癒やし。
-                </h2>
-              </div>
-              <div className="space-y-6 text-neutral-600 leading-relaxed text-base md:text-lg font-medium">
-                <p>
-                  茹でたての真っ白な生地に、そっと箸を入れる。
-                  中から溢れ出すのは、漆黒の輝きを放つ濃厚な黒胡麻餡。
-                </p>
-                <p>
-                  国産米粉と白玉粉をブレンドしたもちもちの生地が、国内製造の黒胡麻を丁寧に練り上げた餡を包み込みます。
-                  驚くほど香り高く、一瞬にして心まで満たしてくれるような、力強いコクをお楽しみください。
-                </p>
-                <p>
-                  頑張った一日の終わりに、自分を甘やかす特別なひととき。
-                  一粒一粒に込められた濃厚な幸福感を、ゆっくりと噛みしめてください。
-                </p>
-              </div>
-              <div className="pt-8 md:pt-10 border-t border-neutral-200 flex flex-col sm:flex-row items-center gap-6 md:gap-10">
-                <div className="text-center sm:text-left">
-                  <span className="text-xs text-neutral-400 font-bold block mb-1 tracking-widest">
-                    胡麻湯圓 / Sesame Tangyuan
-                  </span>
-                  <span className="text-3xl md:text-4xl font-black text-neutral-900">
-                    ¥{PRODUCTS[2].price.toLocaleString()}
-                  </span>
+                    {/* Content */}
+                    <motion.div
+                      {...fadeIn}
+                      transition={{ delay: 0.2 }}
+                      className={`space-y-8 ${isEven ? "" : "md:order-2"}`}
+                    >
+                      <div className={`space-y-4 ${isEven ? "text-right md:text-left" : ""}`}>
+                        <span className={`${theme.accent} font-black tracking-widest text-xs md:text-sm uppercase flex items-center gap-3 ${isEven ? "justify-end md:justify-start" : ""}`}>
+                          {isEven ? (
+                            <>Product Story {String(index + 1).padStart(2, "0")} <div className={`w-8 md:w-12 h-px ${theme.accentBg}`}></div></>
+                          ) : (
+                            <><div className={`w-8 md:w-12 h-px ${theme.accentBg}`}></div> Product Story {String(index + 1).padStart(2, "0")}</>
+                          )}
+                        </span>
+                        <h2 className="text-3xl md:text-5xl font-black text-neutral-900 leading-tight tracking-tight whitespace-pre-line">
+                          {product.headline || product.name}
+                        </h2>
+                      </div>
+
+                      <div className="space-y-6 text-neutral-600 leading-relaxed text-base md:text-lg font-medium">
+                        {paragraphs.length > 0 ? (
+                          paragraphs.map((paragraph, pIndex) => (
+                            <p key={pIndex}>{paragraph}</p>
+                          ))
+                        ) : (
+                          <p>{product.description || "商品説明がありません"}</p>
+                        )}
+                      </div>
+
+                      <div className="pt-8 md:pt-10 border-t border-neutral-200 flex flex-col sm:flex-row items-center gap-6 md:gap-10">
+                        <div className="text-center sm:text-left">
+                          <span className="text-xs text-neutral-400 font-bold block mb-1 tracking-widest">
+                            {product.name}
+                          </span>
+                          <span className="text-3xl md:text-4xl font-black text-neutral-900">
+                            ¥{product.price.toLocaleString()}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => addToCart(product)}
+                          className={`w-full sm:flex-1 bg-neutral-900 text-white py-4 md:py-5 rounded-2xl font-black ${theme.button} transition-all shadow-xl flex items-center justify-center gap-3 text-base md:text-lg`}
+                        >
+                          カートに追加 <Plus className="w-5 h-5 md:w-6 md:h-6" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
                 </div>
-                <button
-                  onClick={() => addToCart(PRODUCTS[2])}
-                  className="w-full sm:flex-1 bg-neutral-900 text-white py-4 md:py-5 rounded-2xl font-black hover:bg-neutral-600 transition-all shadow-xl flex items-center justify-center gap-3 text-base md:text-lg"
-                >
-                  カートに追加 <Plus className="w-5 h-5 md:w-6 md:h-6" />
-                </button>
-              </div>
-            </motion.div>
-          </div>
+              </section>
+            )
+          })}
         </div>
-      </section>
+      )}
 
       {/* How to Enjoy */}
       <section className="py-20 md:py-32 bg-neutral-900 text-white">
@@ -549,7 +460,7 @@ export default function ShopPage() {
               </button>
             </div>
 
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 space-y-6 overflow-y-auto">
               {cart.length === 0 ? (
                 <div className="text-center py-32 space-y-6 text-neutral-900">
                   <div className="w-20 h-20 md:w-24 md:h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto text-neutral-200">
