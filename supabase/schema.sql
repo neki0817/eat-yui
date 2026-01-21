@@ -28,6 +28,9 @@ CREATE TABLE shop_settings (
   hero_image_url TEXT,
   hero_title TEXT,
   hero_subtitle TEXT,
+  hero_keywords TEXT,
+  shop_concept TEXT,
+  target_customer TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

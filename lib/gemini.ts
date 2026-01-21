@@ -2,6 +2,56 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
+export async function generateHeroContent(shopInfo: {
+  shopName: string
+  concept: string
+  targetCustomer: string
+  keywords: string
+}): Promise<{ title: string; subtitle: string; imagePrompt: string }> {
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+
+  const prompt = `あなたはオンラインショップのブランディング専門のコピーライターです。
+以下のショップ情報から、ヒーローセクション（ファーストビュー）用の魅力的なタイトル、サブタイトル、画像生成用プロンプトを作成してください。
+
+ショップ名: ${shopInfo.shopName}
+コンセプト: ${shopInfo.concept}
+ターゲット顧客: ${shopInfo.targetCustomer}
+キーワード: ${shopInfo.keywords}
+
+以下のJSON形式で回答してください:
+{
+  "title": "メインタイトル（改行を含む印象的なキャッチコピー、20-40文字程度。感覚的な表現や擬音語を効果的に使用。例：心ほどける、ふわっ、もちっ。台湾の幸せを倉敷から。）",
+  "subtitle": "サブタイトル（ショップの価値提案を伝える説明文、50-80文字程度。例：国産米粉100%が叶えた、究極の食感。体への優しさと、驚きの美味しさを、倉敷の小さなキッチンからお届けします。）",
+  "imagePrompt": "画像生成AI用の英語プロンプト（ヒーロー画像として使えるイメージ。商品や雰囲気を表現。100-150単語程度）"
+}
+
+注意:
+- titleは感情に訴える、記憶に残るフレーズにしてください
+- subtitleはショップの独自性や強みを伝えてください
+- imagePromptは高品質な商用写真をイメージした詳細なプロンプトにしてください
+- 温かみのある、親しみやすいトーンを心がけてください
+- JSON形式のみで回答してください`
+
+  try {
+    const result = await model.generateContent(prompt)
+    const response = result.response.text()
+
+    const jsonMatch = response.match(/\{[\s\S]*\}/)
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0])
+    }
+
+    throw new Error('Failed to parse AI response')
+  } catch (error) {
+    console.error('Gemini API error:', error)
+    return {
+      title: `${shopInfo.shopName}へようこそ`,
+      subtitle: shopInfo.concept || 'こだわりの商品をお届けします。',
+      imagePrompt: 'A warm, inviting product showcase photograph with soft natural lighting'
+    }
+  }
+}
+
 export async function generateProductStory(product: {
   name: string
   price: number

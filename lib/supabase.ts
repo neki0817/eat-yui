@@ -35,6 +35,9 @@ export type ShopSettings = {
   hero_image_url: string
   hero_title: string
   hero_subtitle: string
+  hero_keywords: string
+  shop_concept: string
+  target_customer: string
   created_at: string
   updated_at: string
 }
