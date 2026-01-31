@@ -4,13 +4,14 @@ export const dynamic = "force-dynamic"
 
 import { useEffect, useState } from "react"
 import { supabase, type ShopSettings } from "@/lib/supabase"
-import { Save, Loader2, Sparkles, Copy } from "lucide-react"
+import { Save, Loader2, Sparkles, Copy, Upload, Trash2 } from "lucide-react"
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<ShopSettings | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [imagePrompt, setImagePrompt] = useState("")
   const [message, setMessage] = useState({ type: "", text: "" })
 
@@ -77,6 +78,38 @@ export default function AdminSettingsPage() {
     } finally {
       setIsGenerating(false)
     }
+  }
+
+  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setMessage({ type: "", text: "" })
+
+    try {
+      const fileExt = file.name.split(".").pop()
+      const fileName = `${Date.now()}.${fileExt}`
+      const filePath = `hero/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from("product-images")
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      const { data } = supabase.storage.from("product-images").getPublicUrl(filePath)
+      setSettings((prev) => prev ? { ...prev, hero_image_url: data.publicUrl } : null)
+      setMessage({ type: "success", text: "画像をアップロードしました" })
+    } catch {
+      setMessage({ type: "error", text: "画像のアップロードに失敗しました" })
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handleHeroImageDelete = () => {
+    setSettings((prev) => prev ? { ...prev, hero_image_url: "" } : null)
   }
 
   const copyImagePrompt = () => {
@@ -258,24 +291,42 @@ export default function AdminSettingsPage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                ヒーロー画像URL
+                ヒーロー画像
               </label>
-              <input
-                type="text"
-                name="hero_image_url"
-                value={settings.hero_image_url || ""}
-                onChange={handleChange}
-                placeholder="/images/hero.png"
-                className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
-              />
-              {settings.hero_image_url && (
-                <div className="mt-4">
+              {settings.hero_image_url ? (
+                <div className="relative w-full max-w-xl">
                   <img
                     src={settings.hero_image_url}
                     alt="ヒーロー画像プレビュー"
-                    className="w-full max-w-md h-48 object-cover rounded-lg"
+                    className="w-full h-56 object-cover rounded-lg border border-neutral-200"
                   />
+                  <button
+                    type="button"
+                    onClick={handleHeroImageDelete}
+                    className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
+              ) : (
+                <label className="flex flex-col items-center justify-center w-full max-w-xl h-56 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors">
+                  {isUploading ? (
+                    <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
+                  ) : (
+                    <>
+                      <Upload className="w-8 h-8 text-neutral-400 mb-2" />
+                      <span className="text-sm text-neutral-500">クリックして画像をアップロード</span>
+                      <span className="text-xs text-neutral-400 mt-1">JPG, PNG, WebP に対応</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleHeroImageUpload}
+                    className="hidden"
+                    disabled={isUploading}
+                  />
+                </label>
               )}
             </div>
             <div>
