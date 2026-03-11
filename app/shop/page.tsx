@@ -434,7 +434,7 @@ export default function ShopPage() {
             <p className="font-bold text-neutral-900">株式会社EAT結</p>
             <p>〒710-0063 岡山県倉敷市日吉町338番1</p>
             <p>086-454-7661</p>
-            <p>pop@eatyui.com</p>
+            <p>info@eatyui.com</p>
           </motion.div>
           <motion.div {...fadeIn} transition={{ delay: 0.3 }} className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-neutral-500">
             <Link href="/shop/legal" className="hover:text-orange-600 transition-colors">
