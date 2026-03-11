@@ -23,6 +23,7 @@ const defaultForm: ProductForm = {
   catchphrase: "",
   headline: "",
   color_theme: "orange",
+  is_sold_out: false,
   display_order: 0,
   status: "draft",
 }
@@ -83,6 +84,7 @@ export default function AdminProductEditPage() {
           catchphrase: data.catchphrase || "",
           headline: data.headline || "",
           color_theme: data.color_theme || "orange",
+          is_sold_out: data.is_sold_out || false,
           display_order: data.display_order || 0,
           status: data.status || "draft",
         })
@@ -499,6 +501,27 @@ export default function AdminProductEditPage() {
         <div className="bg-white rounded-xl border border-neutral-200 p-6">
           <h2 className="text-lg font-bold text-neutral-800 mb-6">公開設定</h2>
           <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
+                売り切れ表示
+              </label>
+              <button
+                type="button"
+                onClick={() => setForm((prev) => ({ ...prev, is_sold_out: !prev.is_sold_out }))}
+                className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                  form.is_sold_out ? "bg-red-500" : "bg-neutral-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                    form.is_sold_out ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+              <span className={`ml-3 text-sm font-medium ${form.is_sold_out ? "text-red-600" : "text-neutral-500"}`}>
+                {form.is_sold_out ? "SOLD OUT（購入不可）" : "販売中"}
+              </span>
+            </div>
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
                 ステータス

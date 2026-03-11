@@ -24,6 +24,7 @@ export type Product = {
   headline: string
   color_theme: 'orange' | 'red' | 'neutral'
   display_order: number
+  is_sold_out: boolean
   status: 'draft' | 'published'
   created_at: string
   updated_at: string

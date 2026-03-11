@@ -322,12 +322,18 @@ export default function ShopPage() {
                             ¥{product.price.toLocaleString()}
                           </span>
                         </div>
-                        <button
-                          onClick={() => addToCart(product)}
-                          className={`w-full sm:flex-1 bg-neutral-900 text-white py-4 md:py-5 rounded-2xl font-black ${theme.button} transition-all shadow-xl flex items-center justify-center gap-3 text-base md:text-lg`}
-                        >
-                          カートに追加 <Plus className="w-5 h-5 md:w-6 md:h-6" />
-                        </button>
+                        {product.is_sold_out ? (
+                          <div className="w-full sm:flex-1 bg-neutral-400 text-white py-4 md:py-5 rounded-2xl font-black flex items-center justify-center gap-3 text-base md:text-lg cursor-not-allowed">
+                            SOLD OUT
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => addToCart(product)}
+                            className={`w-full sm:flex-1 bg-neutral-900 text-white py-4 md:py-5 rounded-2xl font-black ${theme.button} transition-all shadow-xl flex items-center justify-center gap-3 text-base md:text-lg`}
+                          >
+                            カートに追加 <Plus className="w-5 h-5 md:w-6 md:h-6" />
+                          </button>
+                        )}
                       </div>
                     </motion.div>
                   </div>
