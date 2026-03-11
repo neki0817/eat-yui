@@ -127,10 +127,23 @@ export default function ShopPage() {
 
   const handleCheckout = async () => {
     setIsProcessing(true)
-    setTimeout(() => {
-      alert("Stripe決済画面へリダイレクトします。")
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: cart }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data.error || "決済の開始に失敗しました")
+        setIsProcessing(false)
+      }
+    } catch {
+      alert("決済の開始に失敗しました")
       setIsProcessing(false)
-    }, 1500)
+    }
   }
 
   // 説明文を段落に分割
