@@ -1,10 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { supabase } from "@/lib/supabase"
 import {
   Users,
   Globe,
@@ -24,21 +22,6 @@ const fadeIn = {
 }
 
 export default function HomePage() {
-  const [heroImageUrl, setHeroImageUrl] = useState("/images/hero-kitchen-team.jpg")
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      const { data } = await supabase
-        .from("shop_settings")
-        .select("hero_image_url")
-        .single()
-      if (data?.hero_image_url) {
-        setHeroImageUrl(data.hero_image_url)
-      }
-    }
-    fetchSettings()
-  }, [])
-
   const stats = [
     {
       label: "直営店舗数",
@@ -95,7 +78,7 @@ export default function HomePage() {
         <div className="relative w-full h-[50vh] md:absolute md:inset-0 md:h-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={heroImageUrl}
+            src="/images/hero-kitchen-team.jpg"
             alt="EAT結のキッチンスタッフ"
             className="absolute inset-0 w-full h-full object-cover object-[center_20%] md:object-center"
           />
